@@ -15,7 +15,7 @@
     <div v-else>
       <ul>
         <li 
-        v-for="todo in todos" 
+        v-for="todo in sortedTodos()" 
         :key="todo.date"
         :class="{'completed': todo.completed}"
         >
@@ -25,14 +25,19 @@
           </label>
         </li>
       </ul>
+      <label>
+        <input type="checkbox" v-model="hideCompleted">
+        Masquer les tâches complétées
+      </label>
     </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 const newTodo = ref('');
  const todos = ref([]);
+ const hideCompleted = ref(false);
 
  const addTodo = () => {
   todos.value.push({
@@ -41,6 +46,14 @@ const newTodo = ref('');
     completed: false
   });
   newTodo.value = '';
+ };
+ const sortedTodos = () =>  {
+  const sortedTodos = todos.value.toSorted((a, b) => a.completed > b.completed ? 1 : -1);
+  
+  if (hideCompleted.value) {
+    return sortedTodos.filter(todo => !todo.completed);
+  }
+  return sortedTodos;
  }
 </script>
 
