@@ -15,7 +15,7 @@
     <div v-else>
       <ul>
         <li 
-        v-for="todo in sortedTodos()" 
+        v-for="todo in sortedTodos" 
         :key="todo.date"
         :class="{'completed': todo.completed}"
         >
@@ -29,6 +29,7 @@
         <input type="checkbox" v-model="hideCompleted">
         Masquer les tâches complétées
       </label>
+      <p>Il reste {{ remainingTodos }} tâches à faire</p>
     </div>
 </template>
 
@@ -47,14 +48,18 @@ const newTodo = ref('');
   });
   newTodo.value = '';
  };
- const sortedTodos = () =>  {
+ const sortedTodos = computed(() =>  {
   const sortedTodos = todos.value.toSorted((a, b) => a.completed > b.completed ? 1 : -1);
   
   if (hideCompleted.value) {
     return sortedTodos.filter(todo => !todo.completed);
   }
   return sortedTodos;
- }
+ });
+
+ const remainingTodos = computed(() => {
+  return todos.value.filter(todo => !todo.completed).length;
+ });
 </script>
 
 <style>
