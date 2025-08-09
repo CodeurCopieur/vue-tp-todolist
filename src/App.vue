@@ -1,4 +1,17 @@
 <template>
+  <Layout>
+    <template #header>
+      <h1>Todo List</h1>
+    </template>
+    <template #aside>
+      aside
+    </template>
+    <template #main>
+    </template>
+    <template #footer>
+      footer
+    </template>
+  </Layout>
     <form @submit.prevent="addTodo" style="display: block;">
       <fieldset>
         <input 
@@ -15,14 +28,18 @@
     <div v-else>
       <ul>
         <li 
-        v-for="todo in sortedTodos" 
-        :key="todo.date"
-        :class="{'completed': todo.completed}"
-        >
-          <label>
-            <input type="checkbox" v-model="todo.completed">
-            {{ todo.title }}
-          </label>
+          v-for="todo in sortedTodos" 
+          :key="todo.date"
+          :class="{'completed': todo.completed}"
+          >
+            <Checkbox 
+              :label="todo.title"
+              v-model="todo.completed"
+            />
+            <!-- <Checkbox 
+              :label="todo.title"
+              v-model:value="todo.completed"
+            /> -->
         </li>
       </ul>
       <label>
@@ -35,6 +52,9 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import Checkbox from './components/Checkbox.vue';
+import Button from './components/Button.vue';
+import Layout from './Layout.vue';
 
 const newTodo = ref('');
  const todos = ref([]);
