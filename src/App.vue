@@ -12,6 +12,11 @@
       footer
     </template>
   </Layout>
+
+  <button @click="showTimer = !showTimer">
+    {{ showTimer ? 'Stop' : 'Start' }}
+  </button>
+  <Timer v-if="showTimer" />
     <form @submit.prevent="addTodo" style="display: block;">
       <fieldset>
         <input 
@@ -51,14 +56,27 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import Checkbox from './components/Checkbox.vue';
 import Button from './components/Button.vue';
 import Layout from './Layout.vue';
+import Timer from './components/Timer.vue';
 
+const showTimer = ref(false);
 const newTodo = ref('');
  const todos = ref([]);
  const hideCompleted = ref(false);
+
+ onMounted(() => {
+  fetch('https://jsonplaceholder.typicode.com/todos')
+  .then(response => response.json())
+  .then(data => {
+    todos.value = data.map(todo => ({
+      ...todo,
+      completed: false
+    }));
+  });
+ });
 
  const addTodo = () => {
   todos.value.push({
