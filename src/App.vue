@@ -1,4 +1,12 @@
 <template>
+  <h1>watch</h1>
+
+  <input type="text" v-model="inputValue.title">
+
+  Temps écoulé : {{ time }}
+
+  <button @click="reset">Reset</button>
+
   <Layout>
     <template #header>
       <h1>Todo List</h1>
@@ -7,6 +15,7 @@
       aside
     </template>
     <template #main>
+      MAIN
     </template>
     <template #footer>
       footer
@@ -16,6 +25,7 @@
   <button @click="showTimer = !showTimer">
     {{ showTimer ? 'Stop' : 'Start' }}
   </button>
+
   <Timer v-if="showTimer" />
     <form @submit.prevent="addTodo" style="display: block;">
       <fieldset>
@@ -53,19 +63,38 @@
       </label>
       <p>Il reste {{ remainingTodos }} tâches à faire</p>
     </div>
+
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import Checkbox from './components/Checkbox.vue';
-import Button from './components/Button.vue';
-import Layout from './Layout.vue';
-import Timer from './components/Timer.vue';
+  import { ref, computed, onMounted, watch, watchEffect } from 'vue';
+  import Checkbox from './components/Checkbox.vue';
+  import Button from './components/Button.vue';
+  import Layout from './Layout.vue';
+  import Timer from './components/Timer.vue';
+  import { useTimer } from './composables/useTimer';
 
-const showTimer = ref(false);
-const newTodo = ref('');
+  const { time, reset } = useTimer(); 
+
+  const showTimer = ref(false);
+  const newTodo = ref('');
  const todos = ref([]);
  const hideCompleted = ref(false);
+
+ // Observateur
+ const inputValue = ref({
+  title: ''
+ });
+//  watch(() => inputValue.value.title, (newVal, oldVal) => {
+  // console.log('inputValue', newVal);
+  // console.log('oldVal', oldVal);
+
+//   document.title = newVal;
+//  });
+
+ watchEffect(() => {
+  document.title = inputValue.value.title;
+ });
 
  onMounted(() => {
   fetch('https://jsonplaceholder.typicode.com/todos')
@@ -98,6 +127,7 @@ const newTodo = ref('');
  const remainingTodos = computed(() => {
   return todos.value.filter(todo => !todo.completed).length;
  });
+
 </script>
 
 <style>
